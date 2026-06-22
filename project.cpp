@@ -311,9 +311,8 @@ int main() {
        << endl;
   cout << "First things first :-" << endl;
   cout << endl << "To activate calculator enter 'a'" << endl;
-  cout << "To deactivate calculator and switch to suggestioin mode enter 's'"
-       << endl;
-  cout << "To deactivate calculator and quit enter 'q'" << endl;
+  cout << "To switch to suggestioin mode enter 's'" << endl;
+  cout << "To quit the program enter 'q'" << endl;
   cout << "To activate developer mode enter 'd'\n" << endl;
 
   string user_input;
@@ -321,7 +320,8 @@ int main() {
     cout << "\nTO REPEAT THE INSTRUCTIONS enter 'r'\n\n";
     cout << ">> ";
     cin >> user_input;
-    cout << "##################################################################"
+    cout << "\n################################################################"
+            "##"
             "\n";
 
     if (user_input == "q") { // quit function
@@ -338,13 +338,61 @@ int main() {
       string pass_check;
       cin >> pass_check;
       if (pass_check == dev_pass) {
-        cout << "Congratulations You have Entered development mode !!!\n";
+        cout << "\n&&& Congratulations You have Entered development mode !!! "
+                "&&&\n";
+        string dev_in;
+        do {
+          cout << "\n&*& Instructions :-\n";
+          cout << "\nTo check history enter 'h'\nTo clear history enter "
+                  "'hc'\nTo check suggestion box enter's'\nTo clear suggestion "
+                  "box'sc'\nTo exit developer mode enter 'q'\n";
+          cout << "\n>> ";
+          cin >> dev_in;
+          if (dev_in == "h") {
+            ifstream check_his("History.txt");
+            cout << "\n-+-+-+- HISTORY "
+                    "-+-+-+-\n-+-+-+-+-+-+-+-+-+-+-+-\n\n";
+            string line;
+            while (getline(check_his, line)) {
+              cout << line << endl;
+            }
+            cout << "-+-+-+-+-+-+-+-+-+-+-+-\n";
+            check_his.close();
+            continue;
+          }
+          if (dev_in == "hc") {
+            ofstream clear_his("History.txt");
+            clear_his.close();
+          }
+          //
+          if (dev_in == "s") {
+            ifstream check_sugg("suggestion.txt");
+            cout << "\n^^^^^^^ SUGGESTIONS "
+                    "^^^^^^^\n^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n";
+            string line;
+            while (getline(check_sugg, line)) {
+              cout << line << endl;
+            }
+            cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^\n";
+            check_sugg.close();
+            continue;
+          }
+          if (dev_in == "sc") {
+            ofstream clear_sugg("suggestion.txt");
+            clear_sugg.close();
+          }
+          if (dev_in == "hc") {
+            ofstream clear_his("History.txt");
+            clear_his.close();
+          }
+        } while (dev_in != "q");
+        cout << "\n&&& Successfully quited developer mode &&&\n";
       } else {
         cout << "OOPS !!!\nWrong password, Try again later\n\n";
       }
     } else if (user_input == "s") { // suggestion box
       cout << endl << "Give your suggestions below : " << endl;
-      ofstream write_sugg("suggestion.txt");
+      ofstream write_sugg("suggestion.txt", ios::app);
 
       string user_sugg;
       cin.ignore(); /// Important to clear the input buffer
