@@ -1,2 +1,0 @@
-useless calculator. no use.
-improve it to calculate btw unreal numbers too.

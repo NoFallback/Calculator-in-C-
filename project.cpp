@@ -330,10 +330,8 @@ int main() {
       cout << endl << "REPEATING THE INSTRUCTIONS :" << endl << endl;
       ;
       cout << endl << "To activate calculator enter 'a'" << endl;
-      cout
-          << "To deactivate calculator and switch to suggestioin mode enter 's'"
-          << endl;
-      cout << "To deactivate calculator and quit enter 'q'" << endl;
+      cout << "To switch to suggestioin mode enter 's'" << endl;
+      cout << "To quit the program enter 'q'" << endl;
       cout << "To activate developer mode enter 'd'\n" << endl;
     } else if (user_input == "d") { // developer mode
       cout << "\nDeveloper password = ";
@@ -364,8 +362,10 @@ int main() {
           << "You have successfully entered calculation mode\nRemember for "
              "any help u can use GUIDE MENU by entering 'gm' on prompt space\n";
       cout << "Enter 'quit' to exit from calculator workspace" << endl;
+      cout << "Enter 'h' to view history" << endl;
       string calc_in;
       cin.ignore();
+      ofstream write_his("History.txt", ios::app); // opened history.txt
       do {
         cout << endl << ">> ";
 
@@ -381,6 +381,18 @@ int main() {
         }
         if (calc_in == "quit") {
           break;
+        }
+        if (calc_in == "h") {
+          ifstream check_his("History.txt");
+          cout << "\n-+-+-+- HISTORY "
+                  "-+-+-+-\n-+-+-+-+-+-+-+-+-+-+-+-\n\n";
+          string line;
+          while (getline(check_his, line)) {
+            cout << line << endl;
+          }
+          cout << "-+-+-+-+-+-+-+-+-+-+-+-\n";
+          check_his.close();
+          continue;
         }
         ////////////////////////////////// WORK on CALC /////////////////////
         // stringstream lin(calc_in);
@@ -409,6 +421,7 @@ int main() {
 
         /////////////////////////////////////////////////////////////////////
         /////////////// NEW TRIAL ///////// NEW TRIAL ///////////////////////
+
         double ans;
         bool status = enum_input(calc_in, ans);
         if (status == false) {
@@ -416,9 +429,21 @@ int main() {
         } else {
           cout << "\nRESULT = " << ans << endl;
         }
+        // history update
+
+        if (status == false) {
+          write_his << "- - - - Session - - - -" << endl;
+          write_his << calc_in << endl;
+          write_his << "\nERROR (No output)\n" << endl;
+        } else {
+          write_his << "- - - - Session - - - -" << endl;
+          write_his << calc_in << endl;
+          write_his << "\nOutput = " << ans << endl << endl;
+        }
 
         /////////////////////////////////////////////////////////////////////
       } while (calc_in != "quit");
+      write_his.close(); // closed history.txt
       cout << "\n--------------------------------------------------------------"
               "------";
       cout << "\nSuccessfully quit Calculator workspace\n";
