@@ -173,6 +173,24 @@ bool total_work(
   return true;
 }
 
+bool num_string_pusher(
+    string &str,
+    stack<double> &num_stk) { // makes string of num empty and adds to stack_num
+  if (!str.empty()) {         // if num_in_form_of_string_is _empty
+    bool right;
+    double created_num_from_string;
+    right = parsing_for_digits(str, created_num_from_string);
+    if (right == false) {
+      return false;
+    }
+    num_stk.push(created_num_from_string);
+    str = "";
+    return true;
+  } else {
+    return true;
+  }
+}
+
 bool enum_input(string &line, double &ans) {
   if (line.empty()) {
     return false;
@@ -191,22 +209,18 @@ bool enum_input(string &line, double &ans) {
     // Checking if a valid pair
     // <<< moved if block from inside of whitespace
     // block 1st lines>>>
-    bool right = is_valid_pair(prev_ch, ch);
-    if (right == false) {
+    bool right1 = is_valid_pair(prev_ch, ch);
+    if (right1 == false) {
       return false;
     }
     // IF IT IS WHITESPACE
     if (ch == ' ') {
 
-      if (isdigit(prev_ch)) {
-        bool right;
-        double created_num_from_string;
-        right = parsing_for_digits(str_num_maker, created_num_from_string);
-        if (right == false) {
+      if (isdigit(prev_ch)) { // num _
+        bool right2 = num_string_pusher(str_num_maker, num_stk);
+        if (right2 == false) {
           return false;
         }
-        num_stk.push(created_num_from_string);
-        str_num_maker = "";
         prev_ch = ch;
       }
       continue;
@@ -231,53 +245,53 @@ bool enum_input(string &line, double &ans) {
     //  ORDER W.R.T. LAST OP IN STACK (ACCORDING APPLY ADDING STACK OR USE OPER
     //  FUNC)
     auto it_op = find(operator_list.begin(), operator_list.end(), ch);
-    if (it_op != operator_list.end()) {
-      if (!op_stk.empty() && priority[op_stk.top()] == 2 && priority[ch] == 1) {
-        double created_num_from_string;
-        bool rightt1;
-        rightt1 = parsing_for_digits(str_num_maker, created_num_from_string);
-        if (rightt1 == false) {
+    if (it_op != operator_list.end()) { // ch == operator // num op // _ op //
+      if (!op_stk.empty()) {            // op_stk not empty
+        if (priority[op_stk.top()] == 2 &&
+            priority[ch] == 1) { // priority problem
+          bool right3 = num_string_pusher(str_num_maker, num_stk);
+          if (right3 == false) {
+            return false;
+          }
+          //
+          bool right5 = mid_work(num_stk, op_stk, ch);
+          if (right5 == false) {
+            return false;
+          }
+        } else { // priority order is safe
+          bool right6 = num_string_pusher(str_num_maker, num_stk);
+          if (right6 == false) {
+            return false;
+          }
+          op_stk.push(ch);
+        }
+      } else { // op_stk is empty
+        bool right4 = num_string_pusher(str_num_maker, num_stk);
+        if (right4 == false) {
           return false;
         }
-        num_stk.push(created_num_from_string);
-        str_num_maker = "";
-        ////
-        bool right = mid_work(num_stk, op_stk, ch);
-        if (right == false) {
-          return false;
-        }
-      } else {
-        double created_num_from_string;
-        bool rightt1;
-        rightt1 = parsing_for_digits(str_num_maker, created_num_from_string);
-        if (rightt1 == false) {
-          return false;
-        }
-        num_stk.push(created_num_from_string);
-        str_num_maker = "";
-        ////
         op_stk.push(ch);
       }
+      /////// ABOVE IS REBUILD //////
       prev_ch = ch;
       continue;
     }
-  } // CHECK POINT
-  if (str_num_maker != "") {
-    bool rightt;
-    double created_num_from_string;
-    rightt = parsing_for_digits(str_num_maker, created_num_from_string);
-    if (rightt == false) {
-      return false;
-    }
-    num_stk.push(created_num_from_string);
+    // If ALL CASES FAILED//
+    cout << "FAILURE OF CASES\n\n";
+  } // all ch loop done
+  // checked if all numbers r added to num_stk
+  bool right10 = num_string_pusher(str_num_maker, num_stk);
+  if (right10 == false) {
+    return false;
   }
+  //
   bool rright;
   rright = total_work(num_stk, op_stk);
   if (rright == false) {
     return false;
   }
+  // Answer format
   ans = num_stk.top();
-  // IF OPERATOR CHECK IF IT IS LAST CHARACTER
   return true;
 }
 
@@ -398,7 +412,7 @@ int main() {
         double ans;
         bool status = enum_input(calc_in, ans);
         if (status == false) {
-          cout << "\n\n|= ERROR !!!\nIncorrect Please Try Again !!!\n";
+          cout << "\n\n<<ERROR>> !!!\nIncorrect | Please Try Again !!!\n";
         } else {
           cout << "\nRESULT = " << ans << endl;
         }
